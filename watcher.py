@@ -1,17 +1,30 @@
 from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
+from watchdog.events import FileSystemEvent, FileSystemEventHandler
 from subprocess import PIPE, run
 
-import subprocess
+import threading, os, time, subprocess
 
 FILE_LIST_PATH = "files.txt"
 COMMAND_FILE_PATH = "command.sh"
 POST_COMMAND_FILE_PATH = "post_command.sh"
 
+changed_files = set()
+is_live = True
+# This function sleeps for 100ms and checks if the file has been modified
+def check_files():
+    global is_live, changed_files
+    while is_live:
+        time.sleep(0.1)
+        if len(changed_files) > 0:
+            print("[Watcher] Files Modified: ", changed_files)
+            execute()
+            changed_files.clear()
+
 all_files = []
 with open(FILE_LIST_PATH, "r") as f:
     s = f.read()
     all_files = s.split("\n")
+    all_files = [os.path.join(".\\", x) for x in all_files]
 
 print("[Watcher] Watching Files: ", all_files)
 
@@ -39,18 +52,24 @@ def execute():
 
 class MyHandler(FileSystemEventHandler):
     def on_modified(self, event):
-        if not event.is_directory:
-            execute()
+        if event.src_path in all_files and not event.is_directory:
+            changed_files.add(event.src_path)
 
 if __name__ == "__main__":
     observer = Observer()
     event_handler = MyHandler()
-    for file in all_files:
-        observer.schedule(event_handler, path=f"./{file}", recursive=False)
+    observer.schedule(event_handler, path=f".", recursive=False)
     observer.start()
+
+    # start the thread
+    thread = threading.Thread(target=check_files)
+    thread.start()
     try:
-        while True:
+        while is_live:
             pass
     except KeyboardInterrupt:
+        is_live = False
         observer.stop()
+
     observer.join()
+    thread.join()
