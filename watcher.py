@@ -4,6 +4,8 @@ from subprocess import PIPE
 
 import threading, os, time, subprocess, argparse
 
+VERSION = 'v1.0.0'
+
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_FOLDER = "."
 FILE_LIST_PATH = "files.txt"
@@ -49,10 +51,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="Watcher",
                             description="Watchs a bunch of files to execute commands after the files have changes.",
                             epilog="Note: The prorcess is invoked after at least one of the files has changed.")
+    parser.add_argument('-v', '--version', action='version', version=f'%(prog)s {VERSION}')
     parser.add_argument('-p', '--parent_folder', default='.', help="The parent folder where the files are located. Default is the current folder.")
     parser.add_argument('-f', '--file_list', nargs='+', help="The list of files to watch. Default is the files in the files.txt", default=[])
     parser.add_argument('-c', '--command_file', default='command.sh', help="The file containing the command to execute. Default is command.sh")
     parser.add_argument('-t', '--terminal', default='bash', help="The terminal to use to execute the command. Default is bash.")
+    parser.add_argument('-r', '--recursive', action='store_true', help="Watch the files recursively. Default is False.")
 
     args = parser.parse_args()
     PARENT_FOLDER = args.parent_folder
@@ -60,6 +64,8 @@ if __name__ == "__main__":
     TRACKED_FILES = [os.path.join(PARENT_FOLDER, x) for x in TRACKED_FILES]
     COMMAND_FILE_PATH = args.command_file
     TERMINAL = args.terminal
+
+    recursive_watch = args.recursive
 
     FILE_LIST_PATH = os.path.join(PARENT_FOLDER, FILE_LIST_PATH)
     COMMAND_FILE_PATH = os.path.join(PARENT_FOLDER, COMMAND_FILE_PATH)
@@ -86,7 +92,7 @@ if __name__ == "__main__":
 
     observer = Observer()
     event_handler = MyHandler()
-    observer.schedule(event_handler, path=PARENT_FOLDER, recursive=False)
+    observer.schedule(event_handler, path=PARENT_FOLDER, recursive=recursive_watch)
     observer.start()
 
     # start the thread
