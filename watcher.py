@@ -25,13 +25,11 @@ def check_files():
             changed_files.clear()
 
 def execute():
-    check_file_found(COMMAND_FILE_PATH)
     command = ""
     with open(COMMAND_FILE_PATH, "r") as f:
         command = f.read()
     print("[Watcher] Command:", command)
 
-    check_file_found(POST_COMMAND_FILE_PATH)
     post_command = ""
     with open(POST_COMMAND_FILE_PATH, "r") as f:
         post_command = f.read()
@@ -74,7 +72,8 @@ if __name__ == "__main__":
     POST_COMMAND_FILE_PATH = os.path.join(PARENT_FOLDER, POST_COMMAND_FILE_PATH)
 
     print("PARENT_FOLDER: ", PARENT_FOLDER)
-    print("FILE_LIST_PATH: ", FILE_LIST_PATH)
+    if args.file_list != []:
+        print("FILE_LIST_PATH: ", FILE_LIST_PATH)
     print("COMMAND_FILE_PATH: ", COMMAND_FILE_PATH)
     print("POST_COMMAND_FILE_PATH: ", POST_COMMAND_FILE_PATH)
 
@@ -89,6 +88,8 @@ if __name__ == "__main__":
             s = f.read()
             all_files = s.split("\n")
             all_files = [os.path.join(PARENT_FOLDER, x) for x in all_files]
+    check_file_found(COMMAND_FILE_PATH)
+    check_file_found(POST_COMMAND_FILE_PATH)
 
     print("[Watcher] Watching Files: ", all_files)
 
