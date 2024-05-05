@@ -8,7 +8,7 @@ I normally use it to compile c/c++ files quickly and test them fast by simply sa
 
 I have added a simple example in [the example](./example) directory.
 
-You will find that you need to add 3 files:
+You will find that you need to add 2 files:
 
 1. files.txt -> Contains all the files that you want the watcher to watch for modifications
 2. command.sh -> Contains the first command to do once the modification happens.
