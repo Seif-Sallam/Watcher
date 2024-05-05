@@ -49,8 +49,8 @@ class MyHandler(FileSystemEventHandler):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="Watcher",
-                            description="Watchs a bunch of files to execute commands after the files have changes.",
-                            epilog="Note: The prorcess is invoked after at least one of the files has changed.")
+                            description="Watches a bunch of files to execute commands after the files have changes.",
+                            epilog="Note: The process is invoked after at least one of the files has changed.")
     parser.add_argument('-v', '--version', action='version', version=f'%(prog)s {VERSION}')
     parser.add_argument('-p', '--parent_folder', default='.', help="The parent folder where the files are located. Default is the current folder.")
     parser.add_argument('-f', '--file_list', nargs='+', help="The list of files to watch. Default is the files in the files.txt", default=[])
