@@ -8,10 +8,11 @@ CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_FOLDER = "."
 FILE_LIST_PATH = "files.txt"
 COMMAND_FILE_PATH = "command.sh"
+TERMINAL = 'bash'
+TRACKED_FILES = []
 
+is_live = False
 changed_files = set()
-is_live = True
-all_files = []
 
 # This function sleeps for 100ms and checks if the file has been modified
 def check_files():
@@ -41,7 +42,7 @@ def execute():
 
 class MyHandler(FileSystemEventHandler):
     def on_modified(self, event):
-        if event.src_path in all_files and not event.is_directory:
+        if event.src_path in TRACKED_FILES and not event.is_directory:
             changed_files.add(event.src_path)
 
 if __name__ == "__main__":
@@ -50,11 +51,15 @@ if __name__ == "__main__":
                             epilog="Note: The prorcess is invoked after at least one of the files has changed.")
     parser.add_argument('-p', '--parent_folder', default='.', help="The parent folder where the files are located. Default is the current folder.")
     parser.add_argument('-f', '--file_list', nargs='+', help="The list of files to watch. Default is the files in the files.txt", default=[])
+    parser.add_argument('-c', '--command_file', default='command.sh', help="The file containing the command to execute. Default is command.sh")
+    parser.add_argument('-t', '--terminal', default='bash', help="The terminal to use to execute the command. Default is bash.")
 
     args = parser.parse_args()
     PARENT_FOLDER = args.parent_folder
-    all_files = args.file_list
-    all_files = [os.path.join(PARENT_FOLDER, x) for x in all_files]
+    TRACKED_FILES = args.file_list
+    TRACKED_FILES = [os.path.join(PARENT_FOLDER, x) for x in TRACKED_FILES]
+    COMMAND_FILE_PATH = args.command_file
+    TERMINAL = args.terminal
 
     FILE_LIST_PATH = os.path.join(PARENT_FOLDER, FILE_LIST_PATH)
     COMMAND_FILE_PATH = os.path.join(PARENT_FOLDER, COMMAND_FILE_PATH)
@@ -69,15 +74,15 @@ if __name__ == "__main__":
             print("Failed to find: ", file)
             exit(1)
 
-    if all_files == []:
+    if TRACKED_FILES == []:
         check_file_found(FILE_LIST_PATH)
         with open(FILE_LIST_PATH, "r") as f:
             s = f.read()
-            all_files = s.split("\n")
-            all_files = [os.path.join(PARENT_FOLDER, x) for x in all_files]
+            TRACKED_FILES = s.split("\n")
+            TRACKED_FILES = [os.path.join(PARENT_FOLDER, x) for x in TRACKED_FILES]
     check_file_found(COMMAND_FILE_PATH)
 
-    print("[Watcher] Watching Files: ", all_files)
+    print("[Watcher] Watching Files: ", TRACKED_FILES)
 
     observer = Observer()
     event_handler = MyHandler()
@@ -87,6 +92,7 @@ if __name__ == "__main__":
     # start the thread
     thread = threading.Thread(target=check_files)
     thread.start()
+    is_live = True
     try:
         while is_live:
             pass
