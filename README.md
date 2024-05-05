@@ -12,4 +12,3 @@ You will find that you need to add 3 files:
 
 1. files.txt -> Contains all the files that you want the watcher to watch for modifications
 2. command.sh -> Contains the first command to do once the modification happens.
-3. post_command.sh -> A secondary command to do after the first command.sh is executed (It's almost compleletly redundant since you can append it to the first file 🤷‍♂️)

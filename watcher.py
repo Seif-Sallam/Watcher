@@ -8,7 +8,6 @@ CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_FOLDER = "."
 FILE_LIST_PATH = "files.txt"
 COMMAND_FILE_PATH = "command.sh"
-POST_COMMAND_FILE_PATH = "post_command.sh"
 
 changed_files = set()
 is_live = True
@@ -30,21 +29,11 @@ def execute():
         command = f.read()
     print("[Watcher] Command:", command)
 
-    post_command = ""
-    with open(POST_COMMAND_FILE_PATH, "r") as f:
-        post_command = f.read()
-    print("[Watcher] Post Command:", post_command)
-
     os.chdir(PARENT_FOLDER)
 
     result = subprocess.run(['bash', "-c", command], stdout=PIPE, stderr=PIPE, universal_newlines=True)
     if (result.returncode == 0):
         print("[Watcher] Command Executed Successfully")
-        code_output = subprocess.run(['bash', '-c', post_command], universal_newlines=True)
-        if code_output.returncode == 0:
-            print("\n[Watcher] Exited Successfully")
-        else:
-            print(f"\n[Watcher] BAD EXIT: {code_output.returncode}")
     else:
         print(result.returncode)
 
@@ -69,13 +58,11 @@ if __name__ == "__main__":
 
     FILE_LIST_PATH = os.path.join(PARENT_FOLDER, FILE_LIST_PATH)
     COMMAND_FILE_PATH = os.path.join(PARENT_FOLDER, COMMAND_FILE_PATH)
-    POST_COMMAND_FILE_PATH = os.path.join(PARENT_FOLDER, POST_COMMAND_FILE_PATH)
 
     print("PARENT_FOLDER: ", PARENT_FOLDER)
     if args.file_list != []:
         print("FILE_LIST_PATH: ", FILE_LIST_PATH)
     print("COMMAND_FILE_PATH: ", COMMAND_FILE_PATH)
-    print("POST_COMMAND_FILE_PATH: ", POST_COMMAND_FILE_PATH)
 
     def check_file_found(file):
         if not os.path.exists(file):
@@ -89,7 +76,6 @@ if __name__ == "__main__":
             all_files = s.split("\n")
             all_files = [os.path.join(PARENT_FOLDER, x) for x in all_files]
     check_file_found(COMMAND_FILE_PATH)
-    check_file_found(POST_COMMAND_FILE_PATH)
 
     print("[Watcher] Watching Files: ", all_files)
 
