@@ -2,3 +2,6 @@
 .vscode
 /example/*.py
 *.exe
+*.spec
+build/**
+dist/**
