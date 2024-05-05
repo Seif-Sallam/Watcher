@@ -24,7 +24,7 @@ all_files = []
 with open(FILE_LIST_PATH, "r") as f:
     s = f.read()
     all_files = s.split("\n")
-    all_files = [os.path.join(".\\", x) for x in all_files]
+    all_files = [os.path.join(".", x) for x in all_files]
 
 print("[Watcher] Watching Files: ", all_files)
 
