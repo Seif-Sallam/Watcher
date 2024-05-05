@@ -25,11 +25,13 @@ def check_files():
             changed_files.clear()
 
 def execute():
+    check_file_found(COMMAND_FILE_PATH)
     command = ""
     with open(COMMAND_FILE_PATH, "r") as f:
         command = f.read()
     print("[Watcher] Command:", command)
 
+    check_file_found(POST_COMMAND_FILE_PATH)
     post_command = ""
     with open(POST_COMMAND_FILE_PATH, "r") as f:
         post_command = f.read()
@@ -60,9 +62,12 @@ if __name__ == "__main__":
                             description="Watchs a bunch of files to execute commands after the files have changes.",
                             epilog="Note: The prorcess is invoked after at least one of the files has changed.")
     parser.add_argument('-p', '--parent_folder', default='.', help="The parent folder where the files are located. Default is the current folder.")
+    parser.add_argument('-f', '--file_list', nargs='+', help="The list of files to watch. Default is the files in the files.txt", default=[])
 
     args = parser.parse_args()
     PARENT_FOLDER = args.parent_folder
+    all_files = args.file_list
+    all_files = [os.path.join(PARENT_FOLDER, x) for x in all_files]
 
     FILE_LIST_PATH = os.path.join(PARENT_FOLDER, FILE_LIST_PATH)
     COMMAND_FILE_PATH = os.path.join(PARENT_FOLDER, COMMAND_FILE_PATH)
@@ -78,14 +83,12 @@ if __name__ == "__main__":
             print("Failed to find: ", file)
             exit(1)
 
-    check_file_found(FILE_LIST_PATH)
-    check_file_found(COMMAND_FILE_PATH)
-    check_file_found(POST_COMMAND_FILE_PATH)
-
-    with open(FILE_LIST_PATH, "r") as f:
-        s = f.read()
-        all_files = s.split("\n")
-        all_files = [os.path.join(PARENT_FOLDER, x) for x in all_files]
+    if all_files == []:
+        check_file_found(FILE_LIST_PATH)
+        with open(FILE_LIST_PATH, "r") as f:
+            s = f.read()
+            all_files = s.split("\n")
+            all_files = [os.path.join(PARENT_FOLDER, x) for x in all_files]
 
     print("[Watcher] Watching Files: ", all_files)
 
