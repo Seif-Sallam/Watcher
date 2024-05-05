@@ -70,14 +70,14 @@ if __name__ == "__main__":
     FILE_LIST_PATH = os.path.join(PARENT_FOLDER, FILE_LIST_PATH)
     COMMAND_FILE_PATH = os.path.join(PARENT_FOLDER, COMMAND_FILE_PATH)
 
-    print("PARENT_FOLDER: ", PARENT_FOLDER)
+    print("[Watcher] Tracked parent folder: ", PARENT_FOLDER)
     if args.file_list != []:
-        print("FILE_LIST_PATH: ", FILE_LIST_PATH)
-    print("COMMAND_FILE_PATH: ", COMMAND_FILE_PATH)
+        print("[Watcher] Files list path: ", FILE_LIST_PATH)
+    print("[Watcher] Command file path: ", COMMAND_FILE_PATH)
 
     def check_file_found(file):
         if not os.path.exists(file):
-            print("Failed to find: ", file)
+            print("[Watcher] Failed to find: ", file)
             exit(1)
 
     if TRACKED_FILES == []:
