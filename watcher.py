@@ -73,16 +73,14 @@ if __name__ == "__main__":
     print("COMMAND_FILE_PATH: ", COMMAND_FILE_PATH)
     print("POST_COMMAND_FILE_PATH: ", POST_COMMAND_FILE_PATH)
 
-    if not os.path.exists(FILE_LIST_PATH):
-        print("Failed to find: ", FILE_LIST_PATH)
-        exit(1)
-    if not os.path.exists(COMMAND_FILE_PATH):
-        print("Failed to find: ", COMMAND_FILE_PATH)
-        exit(1)
-    if not os.path.exists(POST_COMMAND_FILE_PATH):
-        print("Failed to find: ", POST_COMMAND_FILE_PATH)
-        exit(1)
+    def check_file_found(file):
+        if not os.path.exists(file):
+            print("Failed to find: ", file)
+            exit(1)
 
+    check_file_found(FILE_LIST_PATH)
+    check_file_found(COMMAND_FILE_PATH)
+    check_file_found(POST_COMMAND_FILE_PATH)
 
     with open(FILE_LIST_PATH, "r") as f:
         s = f.read()
